@@ -1,0 +1,21 @@
+{
+  "name": "json-api-route-definition",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/src/main/index.js",
+  "types": "dist/src/main/index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "(rm -r ./dist || true) && tsc -d"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anyhowstep/data-validation": "^1.15.0",
+    "@anyhowstep/json-api-schema": "^1.0.1",
+    "schema-decorator": "^1.16.1"
+  },
+  "devDependencies": {
+    "typescript": "^2.9.0-dev.20180420"
+  }
+}
