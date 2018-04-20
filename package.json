@@ -8,8 +8,12 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "(rm -r ./dist || true) && tsc -d"
   },
-  "author": "",
+  "author": "anyhowstep",
   "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AnyhowStep/json-api-route-definition"
+  },
   "dependencies": {
     "@anyhowstep/data-validation": "^1.15.0",
     "@anyhowstep/json-api-schema": "^1.0.1",
