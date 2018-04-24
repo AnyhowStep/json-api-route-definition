@@ -26,6 +26,8 @@ export function create<
     ResponseT,
     AccessTokenT extends sd.AccessTokenType|undefined,
     MethodT extends sd.MethodLiteral,
+
+    NewBodyT,
     ResponseDataT
 > (
     route : sd.Route<
@@ -37,13 +39,13 @@ export function create<
         AccessTokenT,
         MethodT
     >,
-    bodyCtor : {new():BodyT},
+    bodyCtor : {new():NewBodyT},
     responseDataCtor : {new():ResponseDataT}
 ) : CreateRoute<
     RawParamT,
     ParamT,
     QueryT,
-    BodyT,
+    NewBodyT,
     AccessTokenT,
     ResponseDataT
 > {

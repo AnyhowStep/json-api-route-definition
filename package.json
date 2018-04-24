@@ -1,6 +1,6 @@
 {
   "name": "json-api-route-definition",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "",
   "main": "dist/src/main/index.js",
   "types": "dist/src/main/index.d.ts",

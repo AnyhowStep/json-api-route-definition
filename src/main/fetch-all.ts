@@ -26,6 +26,7 @@ export function fetchAll<
     ResponseT,
     AccessTokenT extends sd.AccessTokenType|undefined,
     MethodT extends sd.MethodLiteral,
+
     ResponseDataT
 > (
     route : sd.Route<

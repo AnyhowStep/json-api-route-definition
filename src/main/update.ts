@@ -26,6 +26,8 @@ export function update<
     ResponseT,
     AccessTokenT extends sd.AccessTokenType|undefined,
     MethodT extends sd.MethodLiteral,
+
+    NewBodyT,
     ResponseDataT
 > (
     route : sd.Route<
@@ -38,14 +40,14 @@ export function update<
         MethodT
     >,
     actionName : string,
-    bodyCtor : {new():BodyT},
+    bodyCtor : {new():NewBodyT},
     responseDataCtor : {new():ResponseDataT},
     method : "PUT"|"DELETE"|"POST" = "PUT"
 ) : UpdateRoute<
     RawParamT,
     ParamT,
     QueryT,
-    BodyT,
+    NewBodyT,
     AccessTokenT,
     ResponseDataT
 > {
