@@ -1,5 +1,3 @@
 import * as sd from "schema-decorator";
-import { KeyBuilder } from "./KeyBuilder";
-import { StringParam } from "./StringParam";
-export declare type DeleteRoute<ParamT> = sd.Route<ParamT, StringParam<ParamT>, sd.Empty, sd.Empty, sd.Empty, undefined, "DELETE">;
-export declare function del<T, ParamT>(keyBuilder: KeyBuilder<T, ParamT>): DeleteRoute<ParamT>;
+export declare type DeleteRoute<RawParamT, ParamT extends sd.Param<RawParamT>, QueryT, BodyT, ResponseT, AccessTokenT extends sd.AccessTokenType | undefined> = sd.Route<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT, "DELETE">;
+export declare function del<RawParamT, ParamT extends sd.Param<RawParamT>, QueryT, BodyT, ResponseT, AccessTokenT extends sd.AccessTokenType | undefined, MethodT extends sd.MethodLiteral>(route: sd.Route<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT, MethodT>): DeleteRoute<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT>;

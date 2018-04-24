@@ -51,7 +51,7 @@ function buildFetchInfiniteScrollExtendedResponseAssertDelegate(assertBeforeT, r
     };
 }
 exports.buildFetchInfiniteScrollExtendedResponseAssertDelegate = buildFetchInfiniteScrollExtendedResponseAssertDelegate;
-function fetchInfiniteScrollExtended(keyBuilder, assertBeforeT, assertExtendsT, responseDataCtor) {
+function fetchInfiniteScrollExtended(route, assertBeforeT, assertExtendsT, responseDataCtor) {
     let InfiniteScrollExtendedOptions = class InfiniteScrollExtendedOptions {
     };
     __decorate([
@@ -70,7 +70,7 @@ function fetchInfiniteScrollExtended(keyBuilder, assertBeforeT, assertExtendsT, 
     InfiniteScrollExtendedOptions = __decorate([
         sd.ignoreExtraVariables
     ], InfiniteScrollExtendedOptions);
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+    return route
         .method("GET")
         .queryDelegate((name, mixed) => {
         const options = sd.toClass(name, mixed, InfiniteScrollExtendedOptions);
@@ -78,7 +78,6 @@ function fetchInfiniteScrollExtended(keyBuilder, assertBeforeT, assertExtendsT, 
         return Object.assign({}, options, extended);
     })
         .responseDelegate(buildFetchInfiniteScrollExtendedResponseAssertDelegate(assertBeforeT, responseDataCtor));
-    return route;
 }
 exports.fetchInfiniteScrollExtended = fetchInfiniteScrollExtended;
 //# sourceMappingURL=fetch-infinite-scroll-extended.js.map

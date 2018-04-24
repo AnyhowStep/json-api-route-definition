@@ -42,11 +42,9 @@ function buildFetchInfiniteScrollResponseAssertDelegate(assertBeforeT, responseD
     };
 }
 exports.buildFetchInfiniteScrollResponseAssertDelegate = buildFetchInfiniteScrollResponseAssertDelegate;
-function fetchInfiniteScroll(keyBuilder, assertBeforeT, responseDataCtor) {
-    //TODO This class does not need to be a generic type...
-    //What were you thinking, Justin?
-    class InfiniteScrollOptions {
-    }
+function fetchInfiniteScroll(route, assertBeforeT, responseDataCtor) {
+    let InfiniteScrollOptions = class InfiniteScrollOptions {
+    };
     __decorate([
         sd.assert(sd.cast(sd.maybe(v.NumberString.assertNaturalNumberString), (from) => {
             if (from == undefined) {
@@ -60,11 +58,13 @@ function fetchInfiniteScroll(keyBuilder, assertBeforeT, responseDataCtor) {
     __decorate([
         sd.assert(sd.maybe(assertBeforeT))
     ], InfiniteScrollOptions.prototype, "before", void 0);
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+    InfiniteScrollOptions = __decorate([
+        sd.ignoreExtraVariables
+    ], InfiniteScrollOptions);
+    return route
         .method("GET")
         .query(InfiniteScrollOptions)
         .responseDelegate(buildFetchInfiniteScrollResponseAssertDelegate(assertBeforeT, responseDataCtor));
-    return route;
 }
 exports.fetchInfiniteScroll = fetchInfiniteScroll;
 //# sourceMappingURL=fetch-infinite-scroll.js.map

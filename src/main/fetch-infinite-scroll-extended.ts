@@ -8,8 +8,6 @@
     compatibility with existing code.
 */
 import * as sd from "schema-decorator";
-import {KeyBuilder} from "./KeyBuilder";
-import {StringParam} from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 import * as v from "@anyhowstep/data-validation";
 
@@ -63,26 +61,59 @@ export function buildFetchInfiniteScrollExtendedResponseAssertDelegate<BeforeT, 
     }
 }
 
-export type FetchInfiniteScrollExtendedRoute<ParamT, BeforeT, ExtendsT, ResponseDataT> = sd.Route<
+export type FetchInfiniteScrollExtendedRoute<
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    BodyT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+
+    BeforeT,
+    ExtendsT,
+    ResponseDataT
+> = sd.Route<
+    RawParamT,
     ParamT,
-    StringParam<ParamT>,
     InfiniteScrollExtendedQuery<BeforeT, ExtendsT>,
-    sd.Empty,
+    BodyT,
     FetchInfiniteScrollExtendedResponse<BeforeT, ResponseDataT>,
-    undefined,
+    AccessTokenT,
     "GET"
 >;
 export function fetchInfiniteScrollExtended<
-    ParamT,
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    ResponseT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+    MethodT extends sd.MethodLiteral,
+
     BeforeT,
     ExtendsT extends {},
     ResponseDataT
 > (
-    keyBuilder  : KeyBuilder<ResponseDataT, ParamT>,
+    route : sd.Route<
+        RawParamT,
+        ParamT,
+        QueryT,
+        BodyT,
+        ResponseT,
+        AccessTokenT,
+        MethodT
+    >,
     assertBeforeT : sd.AssertDelegate<BeforeT>,
     assertExtendsT : sd.AssertDelegate<ExtendsT>,
     responseDataCtor : {new():ResponseDataT}
-) : FetchInfiniteScrollExtendedRoute<ParamT, BeforeT, ExtendsT, ResponseDataT> {
+) : FetchInfiniteScrollExtendedRoute<
+    RawParamT,
+    ParamT,
+    BodyT,
+    AccessTokenT,
+
+    BeforeT,
+    ExtendsT,
+    ResponseDataT
+> {
     @sd.ignoreExtraVariables
     class InfiniteScrollExtendedOptions {
         @sd.assert(sd.cast(
@@ -101,7 +132,7 @@ export function fetchInfiniteScrollExtended<
         before? : null|BeforeT;
     }
 
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+    return route
         .method("GET")
         .queryDelegate((name : string, mixed : any) : InfiniteScrollExtendedQuery<BeforeT, ExtendsT> => {
             const options  = sd.toClass(name, mixed, InfiniteScrollExtendedOptions);
@@ -115,5 +146,4 @@ export function fetchInfiniteScrollExtended<
             assertBeforeT,
             responseDataCtor
         ));
-    return route;
 }

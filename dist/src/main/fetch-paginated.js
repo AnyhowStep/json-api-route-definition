@@ -53,12 +53,11 @@ function buildFetchPaginatedResponseAssertDelegate(responseDataCtor) {
     };
 }
 exports.buildFetchPaginatedResponseAssertDelegate = buildFetchPaginatedResponseAssertDelegate;
-function fetchPaginated(keyBuilder, responseDataCtor) {
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+function fetchPaginated(route, responseDataCtor) {
+    return route
         .method("GET")
         .query(PaginateQuery)
         .responseDelegate(buildFetchPaginatedResponseAssertDelegate(responseDataCtor));
-    return route;
 }
 exports.fetchPaginated = fetchPaginated;
 //# sourceMappingURL=fetch-paginated.js.map

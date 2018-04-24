@@ -1,15 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const sd = require("schema-decorator");
 const jsonApi = require("@anyhowstep/json-api-schema");
-function update(keyBuilder, actionName, bodyCtor, responseDataCtor, method = "PUT") {
-    const route = keyBuilder
-        .setSuffix((actionName == "") ? "" : `/${actionName}`)
-        .buildRoute(sd.Route.Create())
+function update(route, actionName, bodyCtor, responseDataCtor, method = "PUT") {
+    if (actionName != "") {
+        const paramT = route.args.paramT;
+        route = route
+            .withoutParam()
+            .append(`/${actionName}`)
+            .paramAssertion(paramT);
+    }
+    return route
         .method(method)
         .body(bodyCtor)
         .responseAssertion(jsonApi.createDocumentWithCtor(responseDataCtor).assertion);
-    return route;
 }
 exports.update = update;
 //# sourceMappingURL=update.js.map

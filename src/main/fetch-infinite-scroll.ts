@@ -1,6 +1,4 @@
 import * as sd from "schema-decorator";
-import {KeyBuilder} from "./KeyBuilder";
-import {StringParam} from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 import * as v from "@anyhowstep/data-validation";
 
@@ -50,27 +48,57 @@ export function buildFetchInfiniteScrollResponseAssertDelegate<BeforeT, Response
     }
 }
 
-export type FetchInfiniteScrollRoute<ParamT, BeforeT, ResponseDataT> = sd.Route<
+export type FetchInfiniteScrollRoute<
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    BodyT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+
+    BeforeT,
+    ResponseDataT
+> = sd.Route<
+    RawParamT,
     ParamT,
-    StringParam<ParamT>,
     InfiniteScrollQuery<BeforeT>,
-    sd.Empty,
+    BodyT,
     FetchInfiniteScrollResponse<BeforeT, ResponseDataT>,
-    undefined,
+    AccessTokenT,
     "GET"
 >;
 export function fetchInfiniteScroll<
-    ParamT,
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    ResponseT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+    MethodT extends sd.MethodLiteral,
+
     BeforeT,
     ResponseDataT
 > (
-    keyBuilder  : KeyBuilder<ResponseDataT, ParamT>,
+    route : sd.Route<
+        RawParamT,
+        ParamT,
+        QueryT,
+        BodyT,
+        ResponseT,
+        AccessTokenT,
+        MethodT
+    >,
     assertBeforeT : sd.AssertDelegate<BeforeT>,
     responseDataCtor : {new():ResponseDataT}
-) : FetchInfiniteScrollRoute<ParamT, BeforeT, ResponseDataT> {
-    //TODO This class does not need to be a generic type...
-    //What were you thinking, Justin?
-    class InfiniteScrollOptions<BeforeT> {
+) : FetchInfiniteScrollRoute<
+    RawParamT,
+    ParamT,
+    BodyT,
+    AccessTokenT,
+
+    BeforeT,
+    ResponseDataT
+> {
+    @sd.ignoreExtraVariables
+    class InfiniteScrollOptions {
         @sd.assert(sd.cast(
             sd.maybe<string>(v.NumberString.assertNaturalNumberString),
             (from : null|undefined|string) : null|undefined|number => {
@@ -87,12 +115,11 @@ export function fetchInfiniteScroll<
         before? : null|BeforeT;
     }
 
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+    return route
         .method("GET")
         .query<InfiniteScrollQuery<BeforeT>>(InfiniteScrollOptions)
         .responseDelegate(buildFetchInfiniteScrollResponseAssertDelegate(
             assertBeforeT,
             responseDataCtor
         ));
-    return route;
 }

@@ -1,29 +1,54 @@
 import * as sd from "schema-decorator";
-import {KeyBuilder} from "./KeyBuilder";
-import {StringParam} from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 
-export type CreateRoute<ParamT, BodyT, ResponseDataT> = sd.Route<
+export type CreateRoute<
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+
+    ResponseDataT
+> = sd.Route<
+    RawParamT,
     ParamT,
-    StringParam<ParamT>,
-    sd.Empty,
+    QueryT,
     BodyT,
     jsonApi.Document<ResponseDataT>,
-    undefined,
+    AccessTokenT,
     "POST"
 >;
 export function create<
-    ParamT,
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
     BodyT,
+    ResponseT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+    MethodT extends sd.MethodLiteral,
     ResponseDataT
 > (
-    keyBuilder  : KeyBuilder<ResponseDataT, ParamT>,
+    route : sd.Route<
+        RawParamT,
+        ParamT,
+        QueryT,
+        BodyT,
+        ResponseT,
+        AccessTokenT,
+        MethodT
+    >,
     bodyCtor : {new():BodyT},
     responseDataCtor : {new():ResponseDataT}
-) : CreateRoute<ParamT, BodyT, ResponseDataT> {
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+) : CreateRoute<
+    RawParamT,
+    ParamT,
+    QueryT,
+    BodyT,
+    AccessTokenT,
+    ResponseDataT
+> {
+    return route
         .method("POST")
         .body(bodyCtor)
         .responseAssertion(jsonApi.createDocumentWithCtor(responseDataCtor).assertion);
-    return route;
 }

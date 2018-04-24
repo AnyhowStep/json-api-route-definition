@@ -1,6 +1,4 @@
 import * as sd from "schema-decorator";
-import { KeyBuilder } from "./KeyBuilder";
-import { StringParam } from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 export declare type InfiniteScrollExtendedQuery<BeforeT, ExtendsT> = ({
     limit?: null | number;
@@ -21,7 +19,7 @@ export declare type FetchInfiniteScrollExtendedResponse<BeforeT, ResponseDataT> 
 export declare function buildFetchInfiniteScrollExtendedResponseAssertDelegate<BeforeT, ResponseDataT>(assertBeforeT: sd.AssertDelegate<BeforeT>, responseDataCtor: {
     new (): ResponseDataT;
 }): sd.AssertDelegate<FetchInfiniteScrollExtendedResponse<BeforeT, ResponseDataT>>;
-export declare type FetchInfiniteScrollExtendedRoute<ParamT, BeforeT, ExtendsT, ResponseDataT> = sd.Route<ParamT, StringParam<ParamT>, InfiniteScrollExtendedQuery<BeforeT, ExtendsT>, sd.Empty, FetchInfiniteScrollExtendedResponse<BeforeT, ResponseDataT>, undefined, "GET">;
-export declare function fetchInfiniteScrollExtended<ParamT, BeforeT, ExtendsT extends {}, ResponseDataT>(keyBuilder: KeyBuilder<ResponseDataT, ParamT>, assertBeforeT: sd.AssertDelegate<BeforeT>, assertExtendsT: sd.AssertDelegate<ExtendsT>, responseDataCtor: {
+export declare type FetchInfiniteScrollExtendedRoute<RawParamT, ParamT extends sd.Param<RawParamT>, BodyT, AccessTokenT extends sd.AccessTokenType | undefined, BeforeT, ExtendsT, ResponseDataT> = sd.Route<RawParamT, ParamT, InfiniteScrollExtendedQuery<BeforeT, ExtendsT>, BodyT, FetchInfiniteScrollExtendedResponse<BeforeT, ResponseDataT>, AccessTokenT, "GET">;
+export declare function fetchInfiniteScrollExtended<RawParamT, ParamT extends sd.Param<RawParamT>, QueryT, BodyT, ResponseT, AccessTokenT extends sd.AccessTokenType | undefined, MethodT extends sd.MethodLiteral, BeforeT, ExtendsT extends {}, ResponseDataT>(route: sd.Route<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT, MethodT>, assertBeforeT: sd.AssertDelegate<BeforeT>, assertExtendsT: sd.AssertDelegate<ExtendsT>, responseDataCtor: {
     new (): ResponseDataT;
-}): FetchInfiniteScrollExtendedRoute<ParamT, BeforeT, ExtendsT, ResponseDataT>;
+}): FetchInfiniteScrollExtendedRoute<RawParamT, ParamT, BodyT, AccessTokenT, BeforeT, ExtendsT, ResponseDataT>;

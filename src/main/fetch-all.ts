@@ -1,28 +1,54 @@
 import * as sd from "schema-decorator";
-import {KeyBuilder} from "./KeyBuilder";
-import {StringParam} from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 
-export type FetchAllRoute<ParamT, ResponseDataT> = sd.Route<
+export type FetchAllRoute<
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+
+    ResponseDataT
+> = sd.Route<
+    RawParamT,
     ParamT,
-    StringParam<ParamT>,
-    sd.Empty,
-    sd.Empty,
+    QueryT,
+    BodyT,
     jsonApi.Document<ResponseDataT[]>,
-    undefined,
+    AccessTokenT,
     "GET"
 >;
 export function fetchAll<
-    ParamT,
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    ResponseT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+    MethodT extends sd.MethodLiteral,
     ResponseDataT
 > (
-    keyBuilder  : KeyBuilder<ResponseDataT, ParamT>,
+    route : sd.Route<
+        RawParamT,
+        ParamT,
+        QueryT,
+        BodyT,
+        ResponseT,
+        AccessTokenT,
+        MethodT
+    >,
     responseDataCtor : {new():ResponseDataT}
-) : FetchAllRoute<ParamT, ResponseDataT> {
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+) : FetchAllRoute<
+    RawParamT,
+    ParamT,
+    QueryT,
+    BodyT,
+    AccessTokenT,
+    ResponseDataT
+> {
+    return route
         .method("GET")
         .responseAssertion(jsonApi.createDocumentWithDelegate(
             sd.array(sd.nested(responseDataCtor))
         ).assertion);
-    return route;
 }

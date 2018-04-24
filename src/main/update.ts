@@ -1,29 +1,63 @@
 import * as sd from "schema-decorator";
-import {KeyBuilder} from "./KeyBuilder";
-import {StringParam} from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 
-export type UpdateRoute<ParamT, BodyT, ResponseDataT> = sd.Route<
+export type UpdateRoute<
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+
+    ResponseDataT
+> = sd.Route<
+    RawParamT,
     ParamT,
-    StringParam<ParamT>,
-    sd.Empty,
+    QueryT,
     BodyT,
     jsonApi.Document<ResponseDataT>,
-    undefined,
+    AccessTokenT,
     "PUT"|"DELETE"|"POST"
 >;
-export function update<ParamT, BodyT, ResponseDataT> (
-    keyBuilder  : KeyBuilder<ResponseDataT, ParamT>,
+export function update<
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    ResponseT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+    MethodT extends sd.MethodLiteral,
+    ResponseDataT
+> (
+    route : sd.Route<
+        RawParamT,
+        ParamT,
+        QueryT,
+        BodyT,
+        ResponseT,
+        AccessTokenT,
+        MethodT
+    >,
     actionName : string,
     bodyCtor : {new():BodyT},
     responseDataCtor : {new():ResponseDataT},
     method : "PUT"|"DELETE"|"POST" = "PUT"
-) : UpdateRoute<ParamT, BodyT, ResponseDataT> {
-    const route = keyBuilder
-        .setSuffix((actionName == "") ? "" : `/${actionName}`)
-        .buildRoute(sd.Route.Create())
+) : UpdateRoute<
+    RawParamT,
+    ParamT,
+    QueryT,
+    BodyT,
+    AccessTokenT,
+    ResponseDataT
+> {
+    if (actionName != "") {
+        const paramT = route.args.paramT;
+        route = route
+            .withoutParam()
+            .append(`/${actionName}`)
+            .paramAssertion(paramT);
+    }
+    return route
         .method(method)
         .body(bodyCtor)
         .responseAssertion(jsonApi.createDocumentWithCtor(responseDataCtor).assertion);
-    return route;
 }

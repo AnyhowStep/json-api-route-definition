@@ -1,6 +1,4 @@
 import * as sd from "schema-decorator";
-import { KeyBuilder } from "./KeyBuilder";
-import { StringParam } from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 export interface InfiniteScrollQuery<BeforeT> {
     limit?: null | number;
@@ -21,7 +19,7 @@ export declare type FetchInfiniteScrollResponse<BeforeT, ResponseDataT> = (jsonA
 export declare function buildFetchInfiniteScrollResponseAssertDelegate<BeforeT, ResponseDataT>(assertBeforeT: sd.AssertDelegate<BeforeT>, responseDataCtor: {
     new (): ResponseDataT;
 }): sd.AssertDelegate<FetchInfiniteScrollResponse<BeforeT, ResponseDataT>>;
-export declare type FetchInfiniteScrollRoute<ParamT, BeforeT, ResponseDataT> = sd.Route<ParamT, StringParam<ParamT>, InfiniteScrollQuery<BeforeT>, sd.Empty, FetchInfiniteScrollResponse<BeforeT, ResponseDataT>, undefined, "GET">;
-export declare function fetchInfiniteScroll<ParamT, BeforeT, ResponseDataT>(keyBuilder: KeyBuilder<ResponseDataT, ParamT>, assertBeforeT: sd.AssertDelegate<BeforeT>, responseDataCtor: {
+export declare type FetchInfiniteScrollRoute<RawParamT, ParamT extends sd.Param<RawParamT>, BodyT, AccessTokenT extends sd.AccessTokenType | undefined, BeforeT, ResponseDataT> = sd.Route<RawParamT, ParamT, InfiniteScrollQuery<BeforeT>, BodyT, FetchInfiniteScrollResponse<BeforeT, ResponseDataT>, AccessTokenT, "GET">;
+export declare function fetchInfiniteScroll<RawParamT, ParamT extends sd.Param<RawParamT>, QueryT, BodyT, ResponseT, AccessTokenT extends sd.AccessTokenType | undefined, MethodT extends sd.MethodLiteral, BeforeT, ResponseDataT>(route: sd.Route<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT, MethodT>, assertBeforeT: sd.AssertDelegate<BeforeT>, responseDataCtor: {
     new (): ResponseDataT;
-}): FetchInfiniteScrollRoute<ParamT, BeforeT, ResponseDataT>;
+}): FetchInfiniteScrollRoute<RawParamT, ParamT, BodyT, AccessTokenT, BeforeT, ResponseDataT>;

@@ -1,6 +1,4 @@
 import * as sd from "schema-decorator";
-import { KeyBuilder } from "./KeyBuilder";
-import { StringParam } from "./StringParam";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 export declare class PaginateQuery {
     page?: number | null | undefined;
@@ -18,7 +16,7 @@ export declare type FetchPaginatedResponse<ResponseDataT> = (jsonApi.Document<Re
 export declare function buildFetchPaginatedResponseAssertDelegate<ResponseDataT>(responseDataCtor: {
     new (): ResponseDataT;
 }): sd.AssertDelegate<FetchPaginatedResponse<ResponseDataT>>;
-export declare type FetchPaginatedRoute<ParamT, ResponseDataT> = sd.Route<ParamT, StringParam<ParamT>, PaginateQuery, sd.Empty, FetchPaginatedResponse<ResponseDataT>, undefined, "GET">;
-export declare function fetchPaginated<ParamT, ResponseDataT>(keyBuilder: KeyBuilder<ResponseDataT, ParamT>, responseDataCtor: {
+export declare type FetchPaginatedRoute<RawParamT, ParamT extends sd.Param<RawParamT>, BodyT, AccessTokenT extends sd.AccessTokenType | undefined, ResponseDataT> = sd.Route<RawParamT, ParamT, PaginateQuery, BodyT, FetchPaginatedResponse<ResponseDataT>, AccessTokenT, "GET">;
+export declare function fetchPaginated<RawParamT, ParamT extends sd.Param<RawParamT>, QueryT, BodyT, ResponseT, AccessTokenT extends sd.AccessTokenType | undefined, MethodT extends sd.MethodLiteral, ResponseDataT>(route: sd.Route<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT, MethodT>, responseDataCtor: {
     new (): ResponseDataT;
-}): FetchPaginatedRoute<ParamT, ResponseDataT>;
+}): FetchPaginatedRoute<RawParamT, ParamT, BodyT, AccessTokenT, ResponseDataT>;

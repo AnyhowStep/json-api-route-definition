@@ -1,6 +1,4 @@
 import * as sd from "schema-decorator";
-import {KeyBuilder} from "./KeyBuilder";
-import {StringParam} from "./StringParam";
 import {
     PaginateQuery,
     FetchPaginatedResponse,
@@ -12,25 +10,56 @@ export type PaginateExtendedQuery<ExtendsT> = (
     ExtendsT
 );
 
-export type FetchPaginatedExtendedRoute<ParamT, ExtendsT, ResponseDataT> = sd.Route<
+export type FetchPaginatedExtendedRoute<
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    BodyT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+    ExtendsT,
+
+    ResponseDataT
+> = sd.Route<
+    RawParamT,
     ParamT,
-    StringParam<ParamT>,
     PaginateExtendedQuery<ExtendsT>,
-    sd.Empty,
+    BodyT,
     FetchPaginatedResponse<ResponseDataT>,
-    undefined,
+    AccessTokenT,
     "GET"
 >;
 export function fetchPaginatedExtended<
-    ParamT,
+    RawParamT,
+    ParamT extends sd.Param<RawParamT>,
+    QueryT,
+    BodyT,
+    ResponseT,
+    AccessTokenT extends sd.AccessTokenType|undefined,
+    MethodT extends sd.MethodLiteral,
+
     ExtendsT,
     ResponseDataT
 > (
-    keyBuilder  : KeyBuilder<ResponseDataT, ParamT>,
+    route : sd.Route<
+        RawParamT,
+        ParamT,
+        QueryT,
+        BodyT,
+        ResponseT,
+        AccessTokenT,
+        MethodT
+    >,
     assertExtendsT : sd.AssertDelegate<ExtendsT>,
     responseDataCtor : {new():ResponseDataT}
-) : FetchPaginatedExtendedRoute<ParamT, ExtendsT, ResponseDataT> {
-    const route = keyBuilder.buildRoute(sd.Route.Create())
+) : FetchPaginatedExtendedRoute<
+    RawParamT,
+    ParamT,
+    BodyT,
+    AccessTokenT,
+
+    ExtendsT,
+    ResponseDataT
+> {
+    return route
         .method("GET")
         .queryDelegate((name : string, mixed : any) : PaginateExtendedQuery<ExtendsT> => {
             const query    = sd.toClass(name, mixed, PaginateQuery);
@@ -43,5 +72,4 @@ export function fetchPaginatedExtended<
         .responseDelegate(buildFetchPaginatedResponseAssertDelegate(
             responseDataCtor
         ));
-    return route;
 }
