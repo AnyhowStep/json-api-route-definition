@@ -1,11 +1,34 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
+import * as v from "@anyhowstep/data-validation";
 
 @sd.ignoreExtraVariables
 export class PaginateQuery {
-    @sd.assert(sd.maybe(sd.naturalNumber()))
+    //TODO refactor to one function
+    @sd.assert(sd.cast(
+        sd.maybe<string>(v.NumberString.assertNaturalNumberString),
+        (from : null|undefined|string) : null|undefined|number => {
+            if (from == undefined) {
+                return from;
+            } else {
+                return parseInt(from);
+            }
+        },
+        sd.maybe<number>(sd.naturalNumber())
+    ))
     page? : number|null|undefined;
-    @sd.assert(sd.maybe(sd.naturalNumber()))
+    //TODO refactor to one function
+    @sd.assert(sd.cast(
+        sd.maybe<string>(v.NumberString.assertNaturalNumberString),
+        (from : null|undefined|string) : null|undefined|number => {
+            if (from == undefined) {
+                return from;
+            } else {
+                return parseInt(from);
+            }
+        },
+        sd.maybe<number>(sd.naturalNumber())
+    ))
     itemsPerPage? : number|null|undefined;
 }
 

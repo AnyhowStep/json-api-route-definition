@@ -99,6 +99,7 @@ export function fetchInfiniteScroll<
 > {
     @sd.ignoreExtraVariables
     class InfiniteScrollOptions {
+        //TODO refactor to one function
         @sd.assert(sd.cast(
             sd.maybe<string>(v.NumberString.assertNaturalNumberString),
             (from : null|undefined|string) : null|undefined|number => {

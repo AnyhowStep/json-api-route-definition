@@ -8,13 +8,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 const sd = require("schema-decorator");
 const jsonApi = require("@anyhowstep/json-api-schema");
+const v = require("@anyhowstep/data-validation");
 let PaginateQuery = class PaginateQuery {
 };
 __decorate([
-    sd.assert(sd.maybe(sd.naturalNumber()))
+    sd.assert(sd.cast(sd.maybe(v.NumberString.assertNaturalNumberString), (from) => {
+        if (from == undefined) {
+            return from;
+        }
+        else {
+            return parseInt(from);
+        }
+    }, sd.maybe(sd.naturalNumber())))
 ], PaginateQuery.prototype, "page", void 0);
 __decorate([
-    sd.assert(sd.maybe(sd.naturalNumber()))
+    sd.assert(sd.cast(sd.maybe(v.NumberString.assertNaturalNumberString), (from) => {
+        if (from == undefined) {
+            return from;
+        }
+        else {
+            return parseInt(from);
+        }
+    }, sd.maybe(sd.naturalNumber())))
 ], PaginateQuery.prototype, "itemsPerPage", void 0);
 PaginateQuery = __decorate([
     sd.ignoreExtraVariables
