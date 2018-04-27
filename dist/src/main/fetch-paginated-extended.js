@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const sd = require("schema-decorator");
 const fetch_paginated_1 = require("./fetch-paginated");
-function fetchPaginatedExtended(route, assertExtendsT, responseDataCtor) {
+function fetchPaginatedExtended(route, assertExtendsT, response) {
     return route
         .method("GET")
         .queryDelegate((name, mixed) => {
@@ -10,7 +10,7 @@ function fetchPaginatedExtended(route, assertExtendsT, responseDataCtor) {
         const extended = assertExtendsT(name, mixed);
         return Object.assign({}, query, extended);
     })
-        .responseDelegate(fetch_paginated_1.buildFetchPaginatedResponseAssertDelegate(responseDataCtor));
+        .responseDelegate(fetch_paginated_1.buildFetchPaginatedResponseAssertDelegate(response));
 }
 exports.fetchPaginatedExtended = fetchPaginatedExtended;
 //# sourceMappingURL=fetch-paginated-extended.js.map

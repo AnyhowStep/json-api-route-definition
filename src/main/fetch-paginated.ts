@@ -1,6 +1,7 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 import * as v from "@anyhowstep/data-validation";
+import {AssertFunc, toAssertDelegate} from "./util";
 
 @sd.ignoreExtraVariables
 export class PaginateQuery {
@@ -52,10 +53,10 @@ export type FetchPaginatedResponse<ResponseDataT> = (
 );
 
 export function buildFetchPaginatedResponseAssertDelegate<ResponseDataT> (
-    responseDataCtor : {new():ResponseDataT}
+    response : AssertFunc<ResponseDataT>
 ) : sd.AssertDelegate<FetchPaginatedResponse<ResponseDataT>> {
     const documentAssertDelegate = jsonApi.createDocumentWithDelegate(
-        sd.array(sd.nested(responseDataCtor))
+        sd.array(toAssertDelegate(response))
     ).assertDelegate;
     return (name : string, mixed : any) : FetchPaginatedResponse<ResponseDataT> => {
         mixed = documentAssertDelegate(name, mixed);
@@ -100,7 +101,7 @@ export function fetchPaginated<
         AccessTokenT,
         MethodT
     >,
-    responseDataCtor : {new():ResponseDataT}
+    response : AssertFunc<ResponseDataT>
 ) : FetchPaginatedRoute<
     RawParamT,
     ParamT,
@@ -113,6 +114,6 @@ export function fetchPaginated<
         .method("GET")
         .query(PaginateQuery)
         .responseDelegate(buildFetchPaginatedResponseAssertDelegate(
-            responseDataCtor
+            response
         ));
 }

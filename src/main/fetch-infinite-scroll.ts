@@ -1,6 +1,7 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
 import * as v from "@anyhowstep/data-validation";
+import {AssertFunc, toAssertDelegate} from "./util";
 
 export interface InfiniteScrollQuery<BeforeT> {
     limit?  : null|number,
@@ -35,10 +36,10 @@ export type FetchInfiniteScrollResponse<BeforeT, ResponseDataT> = (
 
 export function buildFetchInfiniteScrollResponseAssertDelegate<BeforeT, ResponseDataT> (
     assertBeforeT : sd.AssertDelegate<BeforeT>,
-    responseDataCtor : {new():ResponseDataT}
+    response : AssertFunc<ResponseDataT>
 ) : sd.AssertDelegate<FetchInfiniteScrollResponse<BeforeT, ResponseDataT>> {
     const documentAssertDelegate = jsonApi.createDocumentWithDelegate(
-        sd.array(sd.nested(responseDataCtor))
+        sd.array(toAssertDelegate(response))
     ).assertDelegate;
     const metaCtor = createFetchInfiniteScrollMeta(assertBeforeT);
     return (name : string, mixed : any) : FetchInfiniteScrollResponse<BeforeT, ResponseDataT> => {
@@ -87,7 +88,7 @@ export function fetchInfiniteScroll<
         MethodT
     >,
     assertBeforeT : sd.AssertDelegate<BeforeT>,
-    responseDataCtor : {new():ResponseDataT}
+    response : AssertFunc<ResponseDataT>
 ) : FetchInfiniteScrollRoute<
     RawParamT,
     ParamT,
@@ -121,6 +122,6 @@ export function fetchInfiniteScroll<
         .query<InfiniteScrollQuery<BeforeT>>(InfiniteScrollOptions)
         .responseDelegate(buildFetchInfiniteScrollResponseAssertDelegate(
             assertBeforeT,
-            responseDataCtor
+            response
         ));
 }

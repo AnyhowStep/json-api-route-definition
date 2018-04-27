@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sd = require("schema-decorator");
 const jsonApi = require("@anyhowstep/json-api-schema");
 const v = require("@anyhowstep/data-validation");
+const util_1 = require("./util");
 let PaginateQuery = class PaginateQuery {
 };
 __decorate([
@@ -59,8 +60,8 @@ FetchPaginatedMeta = __decorate([
     sd.ignoreExtraVariables
 ], FetchPaginatedMeta);
 exports.FetchPaginatedMeta = FetchPaginatedMeta;
-function buildFetchPaginatedResponseAssertDelegate(responseDataCtor) {
-    const documentAssertDelegate = jsonApi.createDocumentWithDelegate(sd.array(sd.nested(responseDataCtor))).assertDelegate;
+function buildFetchPaginatedResponseAssertDelegate(response) {
+    const documentAssertDelegate = jsonApi.createDocumentWithDelegate(sd.array(util_1.toAssertDelegate(response))).assertDelegate;
     return (name, mixed) => {
         mixed = documentAssertDelegate(name, mixed);
         mixed.meta = sd.toClass(`${name}[meta]`, mixed.meta, FetchPaginatedMeta);
@@ -68,11 +69,11 @@ function buildFetchPaginatedResponseAssertDelegate(responseDataCtor) {
     };
 }
 exports.buildFetchPaginatedResponseAssertDelegate = buildFetchPaginatedResponseAssertDelegate;
-function fetchPaginated(route, responseDataCtor) {
+function fetchPaginated(route, response) {
     return route
         .method("GET")
         .query(PaginateQuery)
-        .responseDelegate(buildFetchPaginatedResponseAssertDelegate(responseDataCtor));
+        .responseDelegate(buildFetchPaginatedResponseAssertDelegate(response));
 }
 exports.fetchPaginated = fetchPaginated;
 //# sourceMappingURL=fetch-paginated.js.map

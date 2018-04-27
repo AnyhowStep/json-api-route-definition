@@ -4,6 +4,7 @@ import {
     FetchPaginatedResponse,
     buildFetchPaginatedResponseAssertDelegate
 } from "./fetch-paginated";
+import {AssertFunc} from "./util";
 
 export type PaginateExtendedQuery<ExtendsT> = (
     PaginateQuery &
@@ -49,7 +50,7 @@ export function fetchPaginatedExtended<
         MethodT
     >,
     assertExtendsT : sd.AssertDelegate<ExtendsT>,
-    responseDataCtor : {new():ResponseDataT}
+    response : AssertFunc<ResponseDataT>
 ) : FetchPaginatedExtendedRoute<
     RawParamT,
     ParamT,
@@ -70,6 +71,6 @@ export function fetchPaginatedExtended<
             };
         })
         .responseDelegate(buildFetchPaginatedResponseAssertDelegate(
-            responseDataCtor
+            response
         ));
 }

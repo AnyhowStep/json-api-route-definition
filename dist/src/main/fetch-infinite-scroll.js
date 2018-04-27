@@ -9,6 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sd = require("schema-decorator");
 const jsonApi = require("@anyhowstep/json-api-schema");
 const v = require("@anyhowstep/data-validation");
+const util_1 = require("./util");
 function createFetchInfiniteScrollMeta(assertBeforeT) {
     class FetchInfiniteScrollMeta {
         constructor() {
@@ -32,8 +33,8 @@ function createFetchInfiniteScrollMeta(assertBeforeT) {
     return FetchInfiniteScrollMeta;
 }
 exports.createFetchInfiniteScrollMeta = createFetchInfiniteScrollMeta;
-function buildFetchInfiniteScrollResponseAssertDelegate(assertBeforeT, responseDataCtor) {
-    const documentAssertDelegate = jsonApi.createDocumentWithDelegate(sd.array(sd.nested(responseDataCtor))).assertDelegate;
+function buildFetchInfiniteScrollResponseAssertDelegate(assertBeforeT, response) {
+    const documentAssertDelegate = jsonApi.createDocumentWithDelegate(sd.array(util_1.toAssertDelegate(response))).assertDelegate;
     const metaCtor = createFetchInfiniteScrollMeta(assertBeforeT);
     return (name, mixed) => {
         mixed = documentAssertDelegate(name, mixed);
@@ -42,7 +43,7 @@ function buildFetchInfiniteScrollResponseAssertDelegate(assertBeforeT, responseD
     };
 }
 exports.buildFetchInfiniteScrollResponseAssertDelegate = buildFetchInfiniteScrollResponseAssertDelegate;
-function fetchInfiniteScroll(route, assertBeforeT, responseDataCtor) {
+function fetchInfiniteScroll(route, assertBeforeT, response) {
     let InfiniteScrollOptions = class InfiniteScrollOptions {
     };
     __decorate([
@@ -64,7 +65,7 @@ function fetchInfiniteScroll(route, assertBeforeT, responseDataCtor) {
     return route
         .method("GET")
         .query(InfiniteScrollOptions)
-        .responseDelegate(buildFetchInfiniteScrollResponseAssertDelegate(assertBeforeT, responseDataCtor));
+        .responseDelegate(buildFetchInfiniteScrollResponseAssertDelegate(assertBeforeT, response));
 }
 exports.fetchInfiniteScroll = fetchInfiniteScroll;
 //# sourceMappingURL=fetch-infinite-scroll.js.map

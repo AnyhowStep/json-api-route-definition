@@ -1,5 +1,6 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
+import {AssertFunc, toAssertDelegate} from "./util";
 
 export type FetchAllRoute<
     RawParamT,
@@ -38,7 +39,7 @@ export function fetchAll<
         AccessTokenT,
         MethodT
     >,
-    responseDataCtor : {new():ResponseDataT}
+    response : AssertFunc<ResponseDataT>
 ) : FetchAllRoute<
     RawParamT,
     ParamT,
@@ -49,7 +50,7 @@ export function fetchAll<
 > {
     return route
         .method("GET")
-        .responseAssertion(jsonApi.createDocumentWithDelegate(
-            sd.array(sd.nested(responseDataCtor))
-        ).assertion);
+        .responseDelegate(jsonApi.createDocumentWithDelegate(
+            sd.array(toAssertDelegate(response))
+        ).assertDelegate);
 }

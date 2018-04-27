@@ -18,6 +18,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const sd = require("schema-decorator");
 const jsonApi = require("@anyhowstep/json-api-schema");
 const v = require("@anyhowstep/data-validation");
+const util_1 = require("./util");
 function createFetchInfiniteScrollExtendedMeta(assertBeforeT) {
     class FetchInfiniteScrollExtendedMeta {
         constructor() {
@@ -41,8 +42,8 @@ function createFetchInfiniteScrollExtendedMeta(assertBeforeT) {
     return FetchInfiniteScrollExtendedMeta;
 }
 exports.createFetchInfiniteScrollExtendedMeta = createFetchInfiniteScrollExtendedMeta;
-function buildFetchInfiniteScrollExtendedResponseAssertDelegate(assertBeforeT, responseDataCtor) {
-    const documentAssertDelegate = jsonApi.createDocumentWithDelegate(sd.array(sd.nested(responseDataCtor))).assertDelegate;
+function buildFetchInfiniteScrollExtendedResponseAssertDelegate(assertBeforeT, response) {
+    const documentAssertDelegate = jsonApi.createDocumentWithDelegate(sd.array(util_1.toAssertDelegate(response))).assertDelegate;
     const metaCtor = createFetchInfiniteScrollExtendedMeta(assertBeforeT);
     return (name, mixed) => {
         mixed = documentAssertDelegate(name, mixed);
@@ -51,7 +52,7 @@ function buildFetchInfiniteScrollExtendedResponseAssertDelegate(assertBeforeT, r
     };
 }
 exports.buildFetchInfiniteScrollExtendedResponseAssertDelegate = buildFetchInfiniteScrollExtendedResponseAssertDelegate;
-function fetchInfiniteScrollExtended(route, assertBeforeT, assertExtendsT, responseDataCtor) {
+function fetchInfiniteScrollExtended(route, assertBeforeT, assertExtendsT, response) {
     let InfiniteScrollExtendedOptions = class InfiniteScrollExtendedOptions {
     };
     __decorate([
@@ -77,7 +78,7 @@ function fetchInfiniteScrollExtended(route, assertBeforeT, assertExtendsT, respo
         const extended = assertExtendsT(name, mixed);
         return Object.assign({}, options, extended);
     })
-        .responseDelegate(buildFetchInfiniteScrollExtendedResponseAssertDelegate(assertBeforeT, responseDataCtor));
+        .responseDelegate(buildFetchInfiniteScrollExtendedResponseAssertDelegate(assertBeforeT, response));
 }
 exports.fetchInfiniteScrollExtended = fetchInfiniteScrollExtended;
 //# sourceMappingURL=fetch-infinite-scroll-extended.js.map

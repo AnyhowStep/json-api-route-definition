@@ -1,5 +1,6 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
+import {AssertFunc, toAssertDelegate} from "./util";
 
 export type CreateRoute<
     RawParamT,
@@ -39,8 +40,8 @@ export function create<
         AccessTokenT,
         MethodT
     >,
-    bodyCtor : {new():NewBodyT},
-    responseDataCtor : {new():ResponseDataT}
+    body : AssertFunc<NewBodyT>,
+    response : AssertFunc<ResponseDataT>
 ) : CreateRoute<
     RawParamT,
     ParamT,
@@ -51,6 +52,8 @@ export function create<
 > {
     return route
         .method("POST")
-        .body(bodyCtor)
-        .responseAssertion(jsonApi.createDocumentWithCtor(responseDataCtor).assertion);
+        .bodyDelegate(toAssertDelegate(body))
+        .responseDelegate(jsonApi.createDocumentWithDelegate(
+            toAssertDelegate(response)).assertDelegate
+        );
 }

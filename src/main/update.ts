@@ -1,5 +1,6 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
+import {AssertFunc, toAssertDelegate} from "./util";
 
 export type UpdateRoute<
     RawParamT,
@@ -40,8 +41,8 @@ export function update<
         MethodT
     >,
     actionName : string,
-    bodyCtor : {new():NewBodyT},
-    responseDataCtor : {new():ResponseDataT},
+    body : AssertFunc<NewBodyT>,
+    response : AssertFunc<ResponseDataT>,
     method : "PUT"|"DELETE"|"POST" = "PUT"
 ) : UpdateRoute<
     RawParamT,
@@ -51,15 +52,9 @@ export function update<
     AccessTokenT,
     ResponseDataT
 > {
-    if (actionName != "") {
-        const paramT = route.args.paramT;
-        route = route
-            .withoutParam()
-            .append(`/${actionName}`)
-            .paramAssertion(paramT);
-    }
     return route
+        .append(`/${actionName}`)
         .method(method)
-        .body(bodyCtor)
-        .responseAssertion(jsonApi.createDocumentWithCtor(responseDataCtor).assertion);
+        .bodyDelegate(toAssertDelegate(body))
+        .responseDelegate(jsonApi.createDocumentWithDelegate(toAssertDelegate(response)).assertDelegate);
 }
