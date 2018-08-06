@@ -6,11 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./create"));
 __export(require("./delete"));
 __export(require("./fetch-all"));
-__export(require("./fetch-infinite-scroll-extended"));
 __export(require("./fetch-infinite-scroll"));
-__export(require("./fetch-paginated-extended"));
 __export(require("./fetch-paginated"));
 __export(require("./fetch"));
 __export(require("./update"));
-__export(require("./util"));
 //# sourceMappingURL=index.js.map

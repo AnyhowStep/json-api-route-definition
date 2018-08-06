@@ -1,22 +1,30 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
-import { AssertFunc } from "./util";
-export interface InfiniteScrollQuery<BeforeT> {
-    limit?: null | number;
-    before?: null | BeforeT;
+export interface FetchInfiniteScrollQuery<BeforeT> {
+    limit?: undefined | null | number;
+    before?: undefined | null | BeforeT;
 }
+export declare type FetchInfiniteScrollQueryAssertDelegate<BeforeF extends sd.AnyAssertFunc> = (sd.AssertDelegate<FetchInfiniteScrollQuery<sd.TypeOf<BeforeF>>> & {
+    __accepts: FetchInfiniteScrollQuery<sd.AcceptsOf<BeforeF>>;
+    __canAccept: {
+        limit?: undefined | null | string | number;
+        before?: undefined | null | sd.CanAcceptOf<BeforeF>;
+    };
+});
+export declare function fetchInfiniteScrollQuery<BeforeF extends sd.AnyAssertFunc>(beforeF: BeforeF): (FetchInfiniteScrollQueryAssertDelegate<BeforeF>);
 export interface FetchInfiniteScrollMeta<BeforeT> {
     itemsLeft: number;
     limit: number;
-    before?: null | BeforeT;
-    earliest?: null | BeforeT;
+    before?: undefined | null | BeforeT;
+    earliest?: undefined | null | BeforeT;
 }
-export declare function createFetchInfiniteScrollMeta<BeforeT>(assertBeforeT: sd.AssertDelegate<BeforeT>): {
-    new (): FetchInfiniteScrollMeta<BeforeT>;
-};
-export declare type FetchInfiniteScrollResponse<BeforeT, ResponseDataT> = (jsonApi.Document<ResponseDataT[]> & {
-    meta: FetchInfiniteScrollMeta<BeforeT>;
+export declare type FetchInfiniteScrollMetaAssertDelegate<BeforeF extends sd.AnyAssertFunc> = (sd.AssertDelegate<FetchInfiniteScrollMeta<sd.TypeOf<BeforeF>>> & {
+    __accepts: FetchInfiniteScrollMeta<sd.AcceptsOf<BeforeF>>;
+    __canAccept: FetchInfiniteScrollMeta<sd.CanAcceptOf<BeforeF>>;
 });
-export declare function buildFetchInfiniteScrollResponseAssertDelegate<BeforeT, ResponseDataT>(assertBeforeT: sd.AssertDelegate<BeforeT>, response: AssertFunc<ResponseDataT>): sd.AssertDelegate<FetchInfiniteScrollResponse<BeforeT, ResponseDataT>>;
-export declare type FetchInfiniteScrollRoute<RawParamT, ParamT extends sd.Param<RawParamT>, BodyT, AccessTokenT extends sd.AccessTokenType | undefined, BeforeT, ResponseDataT> = sd.Route<RawParamT, ParamT, InfiniteScrollQuery<BeforeT>, BodyT, FetchInfiniteScrollResponse<BeforeT, ResponseDataT>, AccessTokenT, "GET">;
-export declare function fetchInfiniteScroll<RawParamT, ParamT extends sd.Param<RawParamT>, QueryT, BodyT, ResponseT, AccessTokenT extends sd.AccessTokenType | undefined, MethodT extends sd.MethodLiteral, BeforeT, ResponseDataT>(route: sd.Route<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT, MethodT>, assertBeforeT: sd.AssertDelegate<BeforeT>, response: AssertFunc<ResponseDataT>): FetchInfiniteScrollRoute<RawParamT, ParamT, BodyT, AccessTokenT, BeforeT, ResponseDataT>;
+export declare function fetchInfiniteScrollMeta<BeforeF extends sd.AnyAssertFunc>(beforeF: BeforeF): (FetchInfiniteScrollMetaAssertDelegate<BeforeF>);
+export declare type FetchInfiniteScroll<RouteT extends sd.Route<any>, BeforeF extends sd.AnyAssertFunc, DataF extends sd.AnyAssertFunc> = (sd.Route<RouteT["data"] & {
+    queryF: FetchInfiniteScrollQueryAssertDelegate<BeforeF>;
+    responseF: jsonApi.ServerDocumentAssertDelegate<sd.ArrayAssertDelegate<DataF>, FetchInfiniteScrollMetaAssertDelegate<BeforeF>>;
+}>);
+export declare function fetchInfiniteScroll<RouteT extends sd.Route<any>, BeforeF extends sd.AnyAssertFunc, DataF extends sd.AnyAssertFunc>(route: RouteT, beforeF: BeforeF, dataF: DataF): (FetchInfiniteScroll<RouteT, BeforeF, DataF>);

@@ -1,119 +1,57 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
-import * as v from "@anyhowstep/data-validation";
-import {AssertFunc, toAssertDelegate} from "./util";
 
-@sd.ignoreExtraVariables
-export class PaginateQuery {
-    //TODO refactor to one function
-    @sd.assert(sd.cast(
-        sd.maybe<string>(v.NumberString.assertNaturalNumberString),
-        (from : null|undefined|string) : null|undefined|number => {
-            if (from == undefined) {
-                return from;
-            } else {
-                return parseInt(from);
-            }
-        },
-        sd.maybe<number>(sd.naturalNumber())
-    ))
-    page? : number|null|undefined;
-    //TODO refactor to one function
-    @sd.assert(sd.cast(
-        sd.maybe<string>(v.NumberString.assertNaturalNumberString),
-        (from : null|undefined|string) : null|undefined|number => {
-            if (from == undefined) {
-                return from;
-            } else {
-                return parseInt(from);
-            }
-        },
-        sd.maybe<number>(sd.naturalNumber())
-    ))
-    itemsPerPage? : number|null|undefined;
+export interface FetchPaginatedQuery {
+    page? : undefined|null|number;
+    itemsPerPage? : undefined|null|number;
 }
+export const fetchPaginatedQuery = sd.toSchema({
+    page : sd.maybe(sd.stringToNaturalNumber()),
+    itemsPerPage : sd.maybe(sd.stringToNaturalNumber()),
+});
 
-@sd.ignoreExtraVariables
-export class FetchPaginatedMeta {
-    @sd.assert(sd.naturalNumber())
-    itemsFound : number = 0;
-    @sd.assert(sd.naturalNumber())
-    pagesFound : number = 0;
-    @sd.assert(sd.naturalNumber())
-    page : number = 0;
-    @sd.assert(sd.naturalNumber())
-    itemsPerPage : number = 0;
+export interface FetchPaginatedMeta {
+    itemsFound : number,
+    pagesFound : number,
+    page : number,
+    itemsPerPage : number,
 }
+export const fetchPaginatedMeta = sd.toSchema({
+    itemsFound : sd.naturalNumber(),
+    pagesFound : sd.naturalNumber(),
+    page : sd.naturalNumber(),
+    itemsPerPage : sd.naturalNumber(),
+});
 
-export type FetchPaginatedResponse<ResponseDataT> = (
-    jsonApi.Document<ResponseDataT[]> &
-    {
-        meta : FetchPaginatedMeta,
-    }
+export type FetchPaginated<
+    RouteT extends sd.Route<any>,
+    DataF extends sd.AnyAssertFunc
+> = (
+    sd.Route<
+        RouteT["data"] &
+        {
+            queryF : typeof fetchPaginatedQuery,
+            responseF : jsonApi.ServerDocumentAssertDelegate<
+                sd.ArrayAssertDelegate<DataF>,
+                typeof fetchPaginatedMeta
+            >
+        }
+    >
 );
-
-export function buildFetchPaginatedResponseAssertDelegate<ResponseDataT> (
-    response : AssertFunc<ResponseDataT>
-) : sd.AssertDelegate<FetchPaginatedResponse<ResponseDataT>> {
-    const documentAssertDelegate = jsonApi.createDocumentWithDelegate(
-        sd.array(toAssertDelegate(response))
-    ).assertDelegate;
-    return (name : string, mixed : any) : FetchPaginatedResponse<ResponseDataT> => {
-        mixed = documentAssertDelegate(name, mixed);
-        mixed.meta = sd.toClass(`${name}[meta]`, mixed.meta, FetchPaginatedMeta);
-        return mixed;
-    }
-}
-
-export type FetchPaginatedRoute<
-    RawParamT,
-    ParamT extends sd.Param<RawParamT>,
-    BodyT,
-    AccessTokenT extends sd.AccessTokenType|undefined,
-
-    ResponseDataT
-> = sd.Route<
-    RawParamT,
-    ParamT,
-    PaginateQuery,
-    BodyT,
-    FetchPaginatedResponse<ResponseDataT>,
-    AccessTokenT,
-    "GET"
->;
 export function fetchPaginated<
-    RawParamT,
-    ParamT extends sd.Param<RawParamT>,
-    QueryT,
-    BodyT,
-    ResponseT,
-    AccessTokenT extends sd.AccessTokenType|undefined,
-    MethodT extends sd.MethodLiteral,
-
-    ResponseDataT
+    RouteT extends sd.Route<any>,
+    DataF extends sd.AnyAssertFunc
 > (
-    route : sd.Route<
-        RawParamT,
-        ParamT,
-        QueryT,
-        BodyT,
-        ResponseT,
-        AccessTokenT,
-        MethodT
-    >,
-    response : AssertFunc<ResponseDataT>
-) : FetchPaginatedRoute<
-    RawParamT,
-    ParamT,
-    BodyT,
-    AccessTokenT,
-
-    ResponseDataT
-> {
+    route : RouteT,
+    dataF : DataF
+) : (
+    FetchPaginated<RouteT, DataF>
+) {
     return route
         .method("GET")
-        .query(PaginateQuery)
-        .responseDelegate(buildFetchPaginatedResponseAssertDelegate(
-            response
+        .query(fetchPaginatedQuery)
+        .response(jsonApi.serverDocument(
+            sd.array(dataF),
+            fetchPaginatedMeta
         ));
 }

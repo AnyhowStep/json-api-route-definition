@@ -1,19 +1,49 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
-import { AssertFunc } from "./util";
-export declare class PaginateQuery {
+export interface FetchPaginatedQuery {
+    page?: undefined | null | number;
+    itemsPerPage?: undefined | null | number;
+}
+export declare const fetchPaginatedQuery: sd.AssertDelegate<{
     page?: number | null | undefined;
     itemsPerPage?: number | null | undefined;
-}
-export declare class FetchPaginatedMeta {
+}> & {
+    __accepts: {
+        page?: number | null | undefined;
+        itemsPerPage?: number | null | undefined;
+    };
+    __canAccept: {
+        page?: string | number | null | undefined;
+        itemsPerPage?: string | number | null | undefined;
+    };
+};
+export interface FetchPaginatedMeta {
     itemsFound: number;
     pagesFound: number;
     page: number;
     itemsPerPage: number;
 }
-export declare type FetchPaginatedResponse<ResponseDataT> = (jsonApi.Document<ResponseDataT[]> & {
-    meta: FetchPaginatedMeta;
-});
-export declare function buildFetchPaginatedResponseAssertDelegate<ResponseDataT>(response: AssertFunc<ResponseDataT>): sd.AssertDelegate<FetchPaginatedResponse<ResponseDataT>>;
-export declare type FetchPaginatedRoute<RawParamT, ParamT extends sd.Param<RawParamT>, BodyT, AccessTokenT extends sd.AccessTokenType | undefined, ResponseDataT> = sd.Route<RawParamT, ParamT, PaginateQuery, BodyT, FetchPaginatedResponse<ResponseDataT>, AccessTokenT, "GET">;
-export declare function fetchPaginated<RawParamT, ParamT extends sd.Param<RawParamT>, QueryT, BodyT, ResponseT, AccessTokenT extends sd.AccessTokenType | undefined, MethodT extends sd.MethodLiteral, ResponseDataT>(route: sd.Route<RawParamT, ParamT, QueryT, BodyT, ResponseT, AccessTokenT, MethodT>, response: AssertFunc<ResponseDataT>): FetchPaginatedRoute<RawParamT, ParamT, BodyT, AccessTokenT, ResponseDataT>;
+export declare const fetchPaginatedMeta: sd.AssertDelegate<{
+    itemsFound: number;
+    pagesFound: number;
+    page: number;
+    itemsPerPage: number;
+}> & {
+    __accepts: {
+        itemsFound: number;
+        pagesFound: number;
+        page: number;
+        itemsPerPage: number;
+    };
+    __canAccept: {
+        itemsFound: number;
+        pagesFound: number;
+        page: number;
+        itemsPerPage: number;
+    };
+};
+export declare type FetchPaginated<RouteT extends sd.Route<any>, DataF extends sd.AnyAssertFunc> = (sd.Route<RouteT["data"] & {
+    queryF: typeof fetchPaginatedQuery;
+    responseF: jsonApi.ServerDocumentAssertDelegate<sd.ArrayAssertDelegate<DataF>, typeof fetchPaginatedMeta>;
+}>);
+export declare function fetchPaginated<RouteT extends sd.Route<any>, DataF extends sd.AnyAssertFunc>(route: RouteT, dataF: DataF): (FetchPaginated<RouteT, DataF>);

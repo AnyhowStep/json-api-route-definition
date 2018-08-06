@@ -1,60 +1,38 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
-import {AssertFunc, toAssertDelegate} from "./util";
 
-export type UpdateRoute<
-    RawParamT,
-    ParamT extends sd.Param<RawParamT>,
-    QueryT,
-    BodyT,
-    AccessTokenT extends sd.AccessTokenType|undefined,
-
-    ResponseDataT
-> = sd.Route<
-    RawParamT,
-    ParamT,
-    QueryT,
-    BodyT,
-    jsonApi.Document<ResponseDataT>,
-    AccessTokenT,
-    "PUT"|"DELETE"|"POST"
->;
+export type Update<
+    RouteT extends sd.Route<any>,
+    BodyF extends sd.AnyAssertFunc,
+    DataF extends sd.AnyAssertFunc,
+    MetaF extends jsonApi.MetaAssertFunc=undefined
+> = (
+    sd.Route<
+        RouteT["data"] &
+        {
+            bodyF : BodyF,
+            responseF : jsonApi.ServerDocumentAssertDelegate<DataF, MetaF>
+        }
+    >
+);
 export function update<
-    RawParamT,
-    ParamT extends sd.Param<RawParamT>,
-    QueryT,
-    BodyT,
-    ResponseT,
-    AccessTokenT extends sd.AccessTokenType|undefined,
-    MethodT extends sd.MethodLiteral,
-
-    NewBodyT,
-    ResponseDataT
+    RouteT extends sd.Route<any>,
+    BodyF extends sd.AnyAssertFunc,
+    DataF extends sd.AnyAssertFunc,
+    MetaF extends jsonApi.MetaAssertFunc=undefined
 > (
-    route : sd.Route<
-        RawParamT,
-        ParamT,
-        QueryT,
-        BodyT,
-        ResponseT,
-        AccessTokenT,
-        MethodT
-    >,
-    actionName : string,
-    body : AssertFunc<NewBodyT>,
-    response : AssertFunc<ResponseDataT>,
-    method : "PUT"|"DELETE"|"POST" = "PUT"
-) : UpdateRoute<
-    RawParamT,
-    ParamT,
-    QueryT,
-    NewBodyT,
-    AccessTokenT,
-    ResponseDataT
-> {
+    route : RouteT,
+    bodyF : BodyF,
+    dataF : DataF,
+    actionName : string = "",
+    method : "PUT"|"DELETE"|"POST"|"PATCH" = "PUT",
+    metaF? : MetaF
+) : (
+    Update<RouteT, BodyF, DataF, MetaF>
+) {
     return route
         .append(`/${actionName}`)
         .method(method)
-        .bodyDelegate(toAssertDelegate(body))
-        .responseDelegate(jsonApi.createDocumentWithDelegate(toAssertDelegate(response)).assertDelegate);
+        .body(bodyF)
+        .response(jsonApi.serverDocument(dataF, metaF));
 }

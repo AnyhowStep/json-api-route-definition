@@ -1,6 +1,6 @@
 {
   "name": "json-api-route-definition",
-  "version": "2.1.1",
+  "version": "3.0.0",
   "description": "",
   "main": "dist/src/main/index.js",
   "types": "dist/src/main/index.d.ts",
@@ -16,10 +16,10 @@
   },
   "dependencies": {
     "@anyhowstep/data-validation": "^1.15.0",
-    "@anyhowstep/json-api-schema": "^1.0.1",
-    "schema-decorator": "^1.24.2"
+    "@anyhowstep/json-api-schema": "^2.1.0",
+    "schema-decorator": "^2.8.3"
   },
   "devDependencies": {
-    "typescript": "^2.9.0-dev.20180420"
+    "typescript": "^3.0.1"
   }
 }

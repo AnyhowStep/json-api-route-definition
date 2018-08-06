@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonApi = require("@anyhowstep/json-api-schema");
-const util_1 = require("./util");
-function fetch(route, response) {
+function fetch(route, dataF, metaF) {
     return route
         .method("GET")
-        .responseDelegate(jsonApi.createDocumentWithDelegate(util_1.toAssertDelegate(response)).assertDelegate);
+        .response(jsonApi.serverDocument(dataF, metaF));
 }
 exports.fetch = fetch;
 //# sourceMappingURL=fetch.js.map

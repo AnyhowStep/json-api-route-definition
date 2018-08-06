@@ -1,54 +1,30 @@
 import * as sd from "schema-decorator";
 import * as jsonApi from "@anyhowstep/json-api-schema";
-import {AssertFunc, toAssertDelegate} from "./util";
 
-export type FetchRoute<
-    RawParamT,
-    ParamT extends sd.Param<RawParamT>,
-    QueryT,
-    BodyT,
-    AccessTokenT extends sd.AccessTokenType|undefined,
-
-    ResponseDataT
-> = sd.Route<
-    RawParamT,
-    ParamT,
-    QueryT,
-    BodyT,
-    jsonApi.Document<ResponseDataT>,
-    AccessTokenT,
-    "GET"
->;
+export type Fetch<
+    RouteT extends sd.Route<any>,
+    DataF extends sd.AnyAssertFunc,
+    MetaF extends jsonApi.MetaAssertFunc=undefined
+> = (
+    sd.Route<
+        RouteT["data"] &
+        {
+            responseF : jsonApi.ServerDocumentAssertDelegate<DataF, MetaF>
+        }
+    >
+);
 export function fetch<
-    RawParamT,
-    ParamT extends sd.Param<RawParamT>,
-    QueryT,
-    BodyT,
-    ResponseT,
-    AccessTokenT extends sd.AccessTokenType|undefined,
-    MethodT extends sd.MethodLiteral,
-
-    ResponseDataT
+    RouteT extends sd.Route<any>,
+    DataF extends sd.AnyAssertFunc,
+    MetaF extends jsonApi.MetaAssertFunc=undefined
 > (
-    route : sd.Route<
-        RawParamT,
-        ParamT,
-        QueryT,
-        BodyT,
-        ResponseT,
-        AccessTokenT,
-        MethodT
-    >,
-    response : AssertFunc<ResponseDataT>
-) : FetchRoute<
-    RawParamT,
-    ParamT,
-    QueryT,
-    BodyT,
-    AccessTokenT,
-    ResponseDataT
-> {
+    route : RouteT,
+    dataF : DataF,
+    metaF? : MetaF
+) : (
+    Fetch<RouteT, DataF, MetaF>
+) {
     return route
         .method("GET")
-        .responseDelegate(jsonApi.createDocumentWithDelegate(toAssertDelegate(response)).assertDelegate);
+        .response(jsonApi.serverDocument(dataF, metaF));
 }

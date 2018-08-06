@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const jsonApi = require("@anyhowstep/json-api-schema");
-const util_1 = require("./util");
-function create(route, body, response) {
+function create(route, bodyF, dataF, metaF) {
     return route
         .method("POST")
-        .bodyDelegate(util_1.toAssertDelegate(body))
-        .responseDelegate(jsonApi.createDocumentWithDelegate(util_1.toAssertDelegate(response)).assertDelegate);
+        .body(bodyF)
+        .response(jsonApi.serverDocument(dataF, metaF));
 }
 exports.create = create;
 //# sourceMappingURL=create.js.map

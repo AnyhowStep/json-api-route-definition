@@ -20,6 +20,7 @@
         "noImplicitUseStrict": false,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
+        "noErrorTruncation": true,
 
         "strict": true,
 
@@ -28,13 +29,6 @@
         "target": "ES6",
         "jsx": "react",
         "jsxFactory": "h",
-
-        "baseUrl": "./src",
-        "paths": {
-            "*": [
-                "./types/*"
-            ]
-        }
     },
     "compileOnSave": false,
 
